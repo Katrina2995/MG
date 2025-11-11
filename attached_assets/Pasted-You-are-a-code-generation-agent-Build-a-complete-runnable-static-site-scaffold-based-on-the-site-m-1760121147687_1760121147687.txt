@@ -1,0 +1,271 @@
+You are a code generation agent. Build a complete, runnable static-site scaffold based on the site map below. Use Eleventy (11ty) with Nunjucks templates. Produce a clean, accessible, mobile‑first layout with consistent navigation and metadata. Everything must be internal-link friendly and match the .html URLs specified.
+
+====================
+SITE MAP (SOURCE OF TRUTH)
+====================
+[
+  {
+    "url": "https://www.millergroupinc.com/home.html",
+    "title": "Private Investigator & Process Service | MILLERGROUP",
+    "description": "Home page with company overview, licensing (CA, UT, MT), client types, and core practice areas.",
+    "children": [
+      {
+        "url": "https://www.millergroupinc.com/services.html",
+        "title": "Services | Private Investigation, Process Service | MILLERGROUP",
+        "description": "Services overview listing practice areas: Litigation Intel, TSCM, Safety & Privacy, Security Consulting, Due Diligence, Reality TV, Surveillance, and Process Service.",
+        "children": []
+      },
+      {
+        "url": "https://www.millergroupinc.com/profiles.html",
+        "title": "Profiles | Michael Miller | MILLERGROUP",
+        "description": "Profiles landing page linking to team bios.",
+        "children": [
+          {
+            "url": "https://www.millergroupinc.com/bruce-thomas.html",
+            "title": "Bruce Thomas",
+            "description": "Bio for Bruce Thomas, manager of security services; 27-year LASD veteran; crime prevention expertise and major event security background.",
+            "children": []
+          },
+          {
+            "url": "https://www.millergroupinc.com/scott-devereaux.html",
+            "title": "Scott Devereaux",
+            "description": "Bio for Scott Devereaux, background investigations lead; extensive due diligence and surveillance experience, including protective details.",
+            "children": []
+          },
+          {
+            "url": "https://www.millergroupinc.com/michael-miller.html",
+            "title": "Michael Miller",
+            "description": "Bio for founder and principal; prior work with Gavin de Becker & Associates; law enforcement and investigative background.",
+            "children": []
+          }
+        ]
+      },
+      {
+        "url": "https://www.millergroupinc.com/resources.html",
+        "title": "Resources | MILLERGROUP",
+        "description": "Resources page linking to external associations and agencies (no internal child pages).",
+        "children": []
+      },
+      {
+        "url": "https://www.millergroupinc.com/contact.html",
+        "title": "Contact | Santa Monica | Park City | MILLERGROUP",
+        "description": "Contact details including Park City address, phone number, and team emails; license numbers listed.",
+        "children": []
+      }
+    ]
+  },
+  {
+    "url": "https://www.millergroupinc.com/security-consulting.html",
+    "title": "Security Consulting - MILLERGROUP Intelligence, Inc.",
+    "description": "Service detail page outlining offerings like executive protection, counter-surveillance, physical security assessments, information security assessments, law enforcement liaison, and TSCM. Note: not directly linked from visible navigation; discovered during site-wide scan.",
+    "children": []
+  }
+]
+
+====================
+REQUIREMENTS
+====================
+1) Stack
+- Use Node + Eleventy (11ty) with Nunjucks.
+- Output directory: _site. Source directory: src.
+- Use shared layout and partials for header, footer, and SEO tags.
+- Include simple, readable CSS (no frameworks) with a responsive layout and accessible color contrast. Use system fonts.
+
+2) URL strategy
+- Provide BOTH:
+  a) index page (/) as canonical home, AND
+  b) legacy alias /home.html.
+- Every page in the site map must exist with the exact .html filename shown (e.g., /services.html, /profiles.html, etc.).
+- Security Consulting exists at /security-consulting.html but is not in the top nav; it should be discoverable from /services.html.
+
+3) Navigation
+- Top nav items: Home, Services, Profiles, Resources, Contact.
+- Active state styling for the current page.
+- Footer includes business name, placeholder addresses, licensing placeholders, and a copyright year that auto-updates.
+
+4) Accessibility & SEO
+- Each page has: unique <title>, meta description derived from the site map’s “description”, canonical link, Open Graph basics, and landmark regions.
+- All images (use placeholders) have descriptive alt text placeholders.
+- Skip-to-content link and keyboard-accessible nav.
+
+5) Plumbing & QA
+- Include robots.txt, humans.txt, and a generated sitemap.xml.
+- Add a link-check script that validates internal links after build.
+- Add a README with quick start, structure overview, and how to add new pages.
+- Add a JSON file (src/_data/routes.json) mirroring the site map for programmatic nav generation and future automation.
+
+====================
+DELIVERABLES (FILES AND CONTENT)
+====================
+Create this file tree and fill each file with working content:
+
+.
+├─ package.json
+├─ .replit                  # run command for Replit
+├─ README.md
+├─ .eleventy.js
+├─ src
+│  ├─ _data
+│  │  └─ site.json         # site metadata (name, tagline, contact, social placeholders)
+│  │  └─ routes.json       # programmatic copy of the site map with url, title, description
+│  ├─ _includes
+│  │  ├─ layouts
+│  │  │  └─ base.njk       # <head>, header nav, footer, skip link, main block
+│  │  └─ components
+│  │     ├─ header.njk
+│  │     └─ footer.njk
+│  ├─ assets
+│  │  ├─ css
+│  │  │  └─ styles.css     # mobile-first, accessible defaults
+│  │  └─ js
+│  │     └─ main.js        # minimal: mobile menu toggle
+│  ├─ index.njk            # canonical home page (/)
+│  ├─ home.njk             # alias at /home.html (same content as index)
+│  ├─ services.njk
+│  ├─ profiles.njk
+│  ├─ resources.njk
+│  ├─ contact.njk
+│  ├─ security-consulting.njk
+│  ├─ bruce-thomas.njk
+│  ├─ scott-devereaux.njk
+│  ├─ michael-miller.njk
+│  ├─ 404.njk
+│  ├─ sitemap.xml.njk
+│  └─ robots.txt
+└─
+
+Populate key files with the following:
+
+package.json (use latest stable versions):
+{
+  "name": "millergroup-site",
+  "private": true,
+  "scripts": {
+    "dev": "eleventy --serve --port=3000",
+    "build": "eleventy",
+    "check:links": "npx linkinator _site --recurse --skip 'mailto:,tel:' --silent"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.0",
+    "linkinator": "^4.0.0"
+  }
+}
+
+.replit:
+run = "npm run dev"
+
+.eleventy.js:
+- Input dir: "src"
+- Output dir: "_site"
+- Includes dir: "src/_includes"
+- Add passthrough copy for "src/assets"
+- Add a universal Nunjucks filter or shortcode to mark active nav items by comparing page.url
+
+src/_data/site.json:
+{
+  "name": "MILLERGROUP Intelligence, Inc.",
+  "tagline": "Private Investigation & Process Service",
+  "baseUrl": "/",
+  "contact": {
+    "email": "info@example.com",
+    "phone": "(555) 555-5555",
+    "address": "Park City, UT — Placeholder",
+    "licenses": ["CA #######", "UT #######", "MT #######"]
+  },
+  "social": {},
+  "year": ""
+}
+
+src/_data/routes.json:
+- Serialize the SITE MAP above into a compact JSON array with fields: url, title, description.
+- Use these to generate nav and meta descriptions.
+
+src/_includes/layouts/base.njk:
+- HTML5 structure with lang="en", viewport, charset
+- <title>{{ title }} | {{ site.name }}</title>
+- <meta name="description" content="{{ description | safe }}">
+- Canonical link that resolves to the page’s permalink
+- OG tags (title, description)
+- Header with logo text and nav created from routes.json top-level pages
+- Skip-to-content link before header
+- <main id="content">{{ content | safe }}</main>
+- Footer with company name, licenses from site.json, and {{ site.year or current year }}
+
+Each page file:
+- Front matter: layout: "layouts/base.njk", title, description, permalink matching the .html name
+- H1 matches title
+- Short stub content derived from the “description” in the site map
+- Internal links:
+  - services.njk links to /security-consulting.html
+  - profiles.njk links to each team bio page
+  - resources.njk: include a list of external items as placeholders; mark them clearly with rel="nofollow noopener" and target="_blank". Do not include them in internal link checks.
+
+Index vs home:
+- index.njk: permalink: "/"
+- home.njk: permalink: "/home.html"
+- Both share the same content via an include to avoid duplication.
+
+404.njk:
+- permalink: "/404.html"
+- Friendly message and a link back to "/"
+
+robots.txt:
+User-agent: *
+Allow: /
+Sitemap: /sitemap.xml
+
+sitemap.xml.njk:
+- Loop over routes.json and emit <url><loc> absolute paths only for internal pages
+
+assets/css/styles.css:
+- Base typography, layout container, responsive nav, visible focus states, skip-link styles, .active class for nav
+
+assets/js/main.js:
+- Minimal mobile menu toggler
+- No third-party dependencies
+
+README.md:
+- Quick start:
+  - npm install
+  - npm run dev (serve on port 3000)
+  - npm run build
+  - npm run check:links (checks internal links in _site)
+- Structure explanation and how to add a new page (create .njk with front matter and add to routes.json)
+
+====================
+PAGE SPECS (TITLES, PERMALINKS, CONTENT STUBS)
+====================
+Create the following pages with these exact permalinks and titles. Use the provided description for the meta description and a short intro paragraph under the H1.
+
+- index.njk  -> permalink "/"
+  title: "Private Investigator & Process Service"
+  also create home.njk -> permalink "/home.html" with same content
+- services.njk -> "/services.html"
+  title: "Services"
+  include internal link to "/security-consulting.html"
+- profiles.njk -> "/profiles.html"
+  title: "Profiles"
+  list and link to the three bios below
+- bruce-thomas.njk -> "/bruce-thomas.html"
+  title: "Bruce Thomas"
+- scott-devereaux.njk -> "/scott-devereaux.html"
+  title: "Scott Devereaux"
+- michael-miller.njk -> "/michael-miller.html"
+  title: "Michael Miller"
+- resources.njk -> "/resources.html"
+  title: "Resources"
+  render external links as a simple list with external indicators (do not include them in sitemap.xml)
+- contact.njk -> "/contact.html"
+  title: "Contact"
+- security-consulting.njk -> "/security-consulting.html"
+  title: "Security Consulting"
+
+====================
+QUALITY BAR / DEFINITION OF DONE
+====================
+- Project installs and runs with `npm install` then `npm run dev` in Replit.
+- All pages above build to _site with correct .html filenames.
+- Top nav highlights the current page.
+- Sitemap and robots generated.
+- `npm run check:links` passes for all internal links.
+- No console errors; HTML validates; basic accessibility checks pass (headings order, alt attributes present, focus visible).

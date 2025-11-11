@@ -1,0 +1,81 @@
+---
+layout: layouts/base.njk
+title: Contact
+description: Contact details including Park City address, phone number, and team emails; license numbers listed.
+permalink: /contact.html
+---
+
+<div class="container">
+  <div class="content-container">
+    <div class="page-header">
+      <h1>{{ title }}</h1>
+      <p class="page-intro">Get in touch with our team to discuss your investigation or security needs.</p>
+    </div>
+
+    <div class="why-choose-section">
+      <h2>Why Clients Choose <span class="company-name"><strong>MILLER</strong>GROUP Intelligence</span></h2>
+      <ul class="why-choose-list">
+        <li>Licensed private investigator with 30+ years of experience</li>
+        <li>Discreet infidelity investigations and surveillance</li>
+        <li>Reliable process serving throughout Park City and Summit County</li>
+        <li>Local insight combined with national-level investigative resources</li>
+        <li>Professional, compassionate, and results-oriented</li>
+      </ul>
+      <p class="consultation-cta">If you need clarity, proof, or peace of mind — contact <span class="company-name"><strong>MILLER</strong>GROUP Intelligence</span> today for a confidential consultation.</p>
+      <p class="privacy-note">Your privacy is our priority.</p>
+    </div>
+
+    <div class="contact-layout">
+      <div>
+        <h2>Send Us a Message</h2>
+        <form class="contact-form" data-testid="form-contact">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required data-testid="input-name">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required data-testid="input-email">
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" data-testid="input-phone">
+          </div>
+          
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required data-testid="input-message"></textarea>
+          </div>
+          
+          <button type="submit" class="button" data-testid="button-submit">Send Message</button>
+        </form>
+      </div>
+
+      <div class="contact-info">
+        <h2>Contact Information</h2>
+        
+        <h3>Office Location</h3>
+        <p>
+          {{ site.contact.address }}<br>
+          Phone: <a href="tel:{{ site.contact.phone | replace('(', '') | replace(')', '') | replace(' ', '') | replace('-', '') }}">{{ site.contact.phone }}</a><br>
+          Email: <a href="mailto:{{ site.contact.email }}">{{ site.contact.email }}</a>
+        </p>
+
+        <h3>Professional Licenses</h3>
+        <ul class="license-list">
+          {% for license in site.contact.licenses %}
+          <li>{{ license }}</li>
+          {% endfor %}
+        </ul>
+
+        <h3>Business Hours</h3>
+        <p>
+          Monday - Friday: 9:00 AM - 6:00 PM<br>
+          Saturday - Sunday: By Appointment
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

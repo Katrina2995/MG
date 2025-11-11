@@ -1,0 +1,29 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="company-name"><strong>MILLER</strong>GROUP Intelligence, Inc.</h3>
+        <p>{{ site.tagline }}</p>
+      </div>
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <p>
+          {{ site.contact.address }}<br>
+          Phone: <a href="tel:{{ site.contact.phone | replace('(', '') | replace(')', '') | replace(' ', '') | replace('-', '') }}" data-testid="link-phone">{{ site.contact.phone }}</a><br>
+          Email: <a href="mailto:{{ site.contact.email }}" data-testid="link-email">{{ site.contact.email }}</a>
+        </p>
+      </div>
+      <div class="footer-section">
+        <h3>Licenses</h3>
+        <ul class="license-list">
+          {% for license in site.contact.licenses %}
+          <li data-testid="text-license-{{ loop.index }}">{{ license }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {% year %} <span class="company-name"><strong>MILLER</strong>GROUP Intelligence, Inc.</span> All rights reserved.</p>
+    </div>
+  </div>
+</footer>

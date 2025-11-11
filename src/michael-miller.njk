@@ -1,0 +1,45 @@
+---
+layout: layouts/base.njk
+title: Michael Miller
+description: Bio for founder and principal - prior work with Gavin de Becker & Associates; law enforcement and investigative background.
+permalink: /michael-miller.html
+---
+
+<div class="container">
+  <div class="content-container">
+    <div class="page-header">
+      <a href="/profiles.html" data-testid="link-back-profiles">← Back to Profiles</a>
+    </div>
+
+    <div class="profile-detail">
+      <div class="profile-photo" data-testid="img-profile-photo">MM</div>
+      <div>
+        <h1>{{ title }}</h1>
+        <h3>Founder & Principal Investigator</h3>
+        
+        <p>Michael Miller is the founder and principal investigator of <span class="company-name"><strong>MILLER</strong>GROUP Intelligence, Inc.</span> With an extensive background in law enforcement and private investigation, Michael brings a unique combination of tactical expertise and strategic thinking to every case.</p>
+
+        <h4>Professional Background</h4>
+        <p>Prior to founding <span class="company-name"><strong>MILLER</strong>GROUP</span>, Michael worked with Gavin de Becker & Associates, one of the nation's premier threat assessment and protection firms. This experience provided him with unparalleled insight into high-stakes investigation and security operations.</p>
+
+        <p>Michael's law enforcement background includes specialized training in criminal investigation, surveillance techniques, and threat assessment. He has conducted investigations across multiple jurisdictions and handled sensitive cases requiring discretion and expertise.</p>
+
+        <h4>Expertise</h4>
+        <ul>
+          <li>Threat Assessment & Management</li>
+          <li>Complex Investigation Strategy</li>
+          <li>Executive Protection Planning</li>
+          <li>Law Enforcement Liaison</li>
+          <li>Crisis Response & Management</li>
+        </ul>
+
+        <h4>Licenses & Certifications</h4>
+        <ul class="license-list">
+          {% for license in site.contact.licenses %}
+          <li>{{ license }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

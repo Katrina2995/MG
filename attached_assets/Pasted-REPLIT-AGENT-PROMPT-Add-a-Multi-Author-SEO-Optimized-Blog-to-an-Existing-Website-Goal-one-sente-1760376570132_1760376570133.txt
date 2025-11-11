@@ -1,0 +1,314 @@
+REPLIT AGENT PROMPT — Add a Multi-Author, SEO-Optimized Blog to an Existing Website
+
+Goal (one sentence)
+Add a fully functional blog to the current website with multiple author accounts, editorial workflow (draft → review → publish), and industry-standard SEO (SSR, meta tags, sitemap, Open Graph, JSON-LD, canonical URLs, RSS). Produce code, DB schema, tests, and deployment config that work on Replit.
+
+1) ROLE & CONSTRAINTS (copy this exactly into the Agent prompt)
+
+You are an expert full-stack engineer who ships secure, testable web features. Use modern best practices, automated tests, and create checkpoints before destructive operations (DB migrations, large refactors). Implement the feature in Next.js (React) with server-side rendering for SEO; backend API routes in the same Next app; PostgreSQL (Replit SQL). Use Prisma ORM for DB access and migrations. Hash passwords with bcrypt. Store secrets in Replit Secrets. Create requirements/package.json and replit.nix / .replit entries so the app runs on Replit.
+
+Important agent behaviour:
+
+Present a one-page plan (bullet list of steps) before making code changes.
+
+Wait for explicit acceptance to proceed. (But once accepted, perform each step and create a Replit checkpoint before DB migrations and before deploy.)
+
+After each major step, run unit + integration tests and report results.
+
+2) PROJECT SUMMARY
+
+Add a blog subsystem to the site at /blog with:
+
+Multi-author accounts (roles: author, editor, admin).
+
+Authors create/edit drafts, submit for review; editors approve and publish.
+
+Posts support markdown (WYSIWYG editor that saves markdown), images (optimized with Next/Image and App Storage), tags, categories, SEO fields (title, meta_description, canonical_url, meta_robots, featured_image).
+
+Public pages are server-side rendered for SEO and include schema.org Article JSON-LD, Open Graph tags, Twitter Card, canonical tags, and human-readable slugs.
+
+Generate sitemap.xml and rss.xml automatically on publish.
+
+Provide admin UI at /admin/blog (list, approve, edit, delete).
+
+Full text search (Postgres tsvector index) and tag/category filters.
+
+RSS feed and robots.txt.
+
+Accessibility basics and semantic HTML.
+
+3) TECH STACK (explicit)
+
+Frontend / SSR: Next.js (use App Router or Pages Router as preferred by Agent; ensure SSR for blog pages).
+
+Backend DB: PostgreSQL (Replit SQL / Neon).
+
+ORM: Prisma (with migrations).
+
+Auth: Session cookies with bcrypt password hashing (or NextAuth with custom credentials if Agent prefers) — must support email verification & password reset flows.
+
+Editor: Markdown editor (e.g., React Markdown + simple toolbar) and optional WYSIWYG that stores markdown.
+
+Image storage: Replit App Storage or GCS-compatible object storage; use Next/Image optimization.
+
+Tests: Jest + React Testing Library + Supertest (integration).
+
+Lint/format: ESLint + Prettier.
+
+CI: Provide simple test command and instructions for running locally in Replit.
+
+4) USER STORIES / ACCEPTANCE CRITERIA (Agent must implement these)
+
+Sign up / Login — Visitors can sign up as authors (email verification) and login securely. Passwords hashed with bcrypt.
+
+Roles — An admin can promote/demote users to author/editor/admin. Permissions enforced on both UI and API.
+
+Create/Edit Post — Logged-in authors can create drafts in markdown, edit, save, and preview. Drafts are private until submitted for review.
+
+Submit/Review/Publish — Authors submit drafts for review; editors see pending posts, can request changes or publish. Publishing writes published_at and triggers sitemap/rss update.
+
+SEO Fields — Each post has meta_title, meta_description (trimmed to 155–160 chars), canonical_url (auto or custom), noindex flag, and featured_image. Published pages include proper meta and JSON-LD Article markup.
+
+Permalinks & Slugs — Clean, unique slugs (e.g., /blog/2025/10/13/my-awesome-post) with redirects if slug changes.
+
+Sitemap & RSS — sitemap.xml and rss.xml are auto-generated and kept up to date.
+
+Search & Tags — Public search across title/content using Postgres full-text and a tag index.
+
+Admin UI — Admin page to manage posts, authors, and moderate comments (if comments included).
+
+Performance & Security — SSR pages, cache headers, sanitize markdown, prevent XSS, rate limit publish API, protect secrets.
+
+Tests — Unit tests for core functions, integration tests for auth and publish flows. All tests must pass before marking feature done.
+
+5) DATA MODEL (Prisma schema + SQL summary — create migrations)
+
+Provide schema.prisma that includes the following models (exact fields below):
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  role         UserRole  @default(AUTHOR) // AUTHOR | EDITOR | ADMIN
+  bio          String?
+  avatarUrl    String?
+  createdAt    DateTime  @default(now())
+  posts        Post[]
+  comments     Comment[]
+}
+
+model Post {
+  id             Int       @id @default(autoincrement())
+  title          String
+  slug           String    @unique
+  summary        String?   // short excerpt
+  content        String    // markdown
+  htmlContent    String    // pre-rendered HTML (optional cache)
+  status         PostStatus @default(DRAFT) // DRAFT | REVIEW | PUBLISHED | ARCHIVED
+  metaTitle      String?
+  metaDescription String?
+  canonicalUrl   String?
+  featuredImage  String?
+  authorId       Int
+  author         User      @relation(fields: [authorId], references: [id])
+  tags           Tag[]     @relation("PostTags")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  publishedAt    DateTime?
+  searchVector   String?   // for tsvector indexing (or generated column)
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+  posts Post[] @relation("PostTags")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  authorId  Int
+  postId    Int
+  createdAt DateTime @default(now())
+  // (moderation fields optional)
+}
+
+enum UserRole { AUTHOR EDITOR ADMIN }
+enum PostStatus { DRAFT REVIEW PUBLISHED ARCHIVED }
+
+
+Indexes & Full-text: Add a GIN index on a tsvector column (to_tsvector('english', title || ' ' || content)) for search. Agent should create migration that creates this index.
+
+6) ROUTES / API ENDPOINTS (Next.js pages + /api)
+
+Public routes:
+
+GET /blog — blog index (paginated), server-side rendered, proper cache headers.
+
+GET /blog/sitemap.xml — auto sitemap (can be served dynamically).
+
+GET /blog/rss.xml — RSS feed.
+
+GET /blog/[year]/[month]/[day]/[slug] — post detail SSR.
+
+GET /blog/tag/[tag] — tag archive.
+
+GET /blog/search?q=... — search page.
+
+Auth & admin API (protected):
+
+POST /api/auth/register — registers user, sends verification email.
+
+POST /api/auth/login — returns session cookie.
+
+POST /api/auth/logout — clears session.
+
+POST /api/auth/forgot — send reset email.
+
+POST /api/auth/reset — reset password.
+
+GET /api/me — current user.
+
+POST /api/posts — create draft (author).
+
+PUT /api/posts/:id — update (author or editor).
+
+POST /api/posts/:id/submit — submit for review (author).
+
+POST /api/posts/:id/publish — publish (editor). (Checkpoint before DB migration or publish script changes.)
+
+GET /api/admin/posts?status=REVIEW — admin view.
+
+GET /api/tags — list tags.
+
+Agent must also produce client pages and admin UI components.
+
+7) SEO CHECKLIST (Agent must implement)
+
+Use SSR for post pages (so meta tags and content present in HTML).
+
+Generate meta_title and meta_description fields for each post and include them in <head>. Truncate descriptions to 155 chars server-side.
+
+Add Open Graph (og:title, og:description, og:image, og:type=article, og:url) and Twitter Card tags.
+
+Add JSON-LD Article schema embedding author, datePublished, dateModified, headline, image, publisher.
+
+Produce sitemap.xml and update it on publish. Ping search engines (optional) or provide instructions.
+
+Provide canonical tags and redirect old slugs to new slugs (301).
+
+Generate robots.txt (allow /blog, disallow admin paths).
+
+Ensure images have alt text (author provided fallback).
+
+Provide human readable breadcrumbs (schema.org BreadcrumbList optional).
+
+Provide rel=prev/next for paginated archive.
+
+Provide an rss.xml.
+
+Add meta tag noindex toggle for posts if meta_robots set.
+
+8) SECURITY & SANITIZATION
+
+Sanitize markdown → HTML using a library that strips unsafe tags/attributes (e.g. DOMPurify or sanitize-html) before saving/rendering.
+
+CSRF protection for form posts (use same-site cookies and CSRF tokens).
+
+Rate limit endpoints like register and publish to prevent abuse.
+
+Use HTTPS (Replit provides TLS for custom domains).
+
+Secrets: DATABASE_URL, SECRET_KEY, EMAIL_SMTP_*, STORAGE_KEY set in Replit Secrets.
+
+9) DEPLOYMENT / REPLIT SETUP
+
+package.json scripts: dev, build, start, migrate, test.
+
+replit.nix with node and prisma cli packages (Agent should generate).
+
+.replit run command set to npm run dev for development; document steps to create production deployment.
+
+Use Replit PostgreSQL connection string in DATABASE_URL secret.
+
+Create Replit Checkpoints before migrations & before publish automation runs.
+
+10) TESTS & QA
+
+Unit tests for slug generation, permissions, and sitemap generation.
+
+Integration tests: register → login → create draft → submit → publish → check permalink & sitemap.
+
+SEO verification test: fetch rendered page HTML and assert presence of og: tags, JSON-LD, canonical.
+
+Run npm test in CI or Replit shell; the Agent must ensure tests are passing.
+
+11) DELIVERABLES (what Agent must produce)
+
+Fully working Next.js app modifications and new pages/components.
+
+prisma/schema.prisma + migration files.
+
+API route implementations.
+
+Admin UI at /admin/blog.
+
+Unit and integration tests.
+
+sitemap.xml and rss.xml generation logic.
+
+replit.nix and .replit entries and README with run/migrate/deploy/test instructions.
+
+A short checklist of manual QA items and a post-deploy testing checklist.
+
+A short handover note with how to change SEO defaults, how to add editors, and how to run a DB rollback.
+
+12) STEP PLAN (Agent must show this before coding)
+
+Present a 5–10 line plan with estimated sub-steps.
+
+On approval: create Git branch feature/blog and a Replit Checkpoint.
+
+Scaffold Prisma models + run initial migration (create checkpoint before running).
+
+Implement auth endpoints + user model and email verification flow. Add tests.
+
+Implement post model, editor UI, markdown handling, and preview. Add tests.
+
+Implement publish workflow, sitemap/rss generation, JSON-LD, Open Graph meta. Add tests.
+
+Implement admin UI, role management, and search. Add tests.
+
+Finalize styles and accessibility checks; run full test suite.
+
+Create production build and deployment instructions; create final checkpoint.
+
+13) EXTRA NOTES FOR THE AGENT (explicit preferences)
+
+Use server-side rendering for blog pages to maximize SEO.
+
+Use Prisma and keep SQL readable; add GIN index for tsvector search.
+
+Create migration scripts and a rollback plan. Always checkpoint before running any DB migration.
+
+Keep UI minimal but accessible and responsive. Use Tailwind CSS if convenient.
+
+Provide sample seed data: 2 authors (author + editor), 5 posts (drafts and published), 8 tags.
+
+Document how to reindex search vectors (SQL snippet).
+
+14) Acceptance criteria for me (the human) to mark this done
+
+All user stories in section 4 pass automated tests.
+
+SSR post pages render meta tags and JSON-LD server-side and pass the included SEO tests.
+
+Sitemap and RSS contain published posts and are reachable at /blog/sitemap.xml and /blog/rss.xml.
+
+Admin UI present and functional.
+
+Replit deployment instructions work and npm run build + npm start run the production app.
+
+Replit Secrets listed and documented.

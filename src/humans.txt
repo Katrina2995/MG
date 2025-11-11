@@ -1,0 +1,12 @@
+---
+permalink: /humans.txt
+eleventyExcludeFromCollections: true
+---
+/* TEAM */
+  Developer: MILLERGROUP Development Team
+  Site: {{ site.baseUrl }}
+  
+/* SITE */
+  Standards: HTML5, CSS3, Accessible
+  Components: Eleventy, Nunjucks
+  Software: Eleventy Static Site Generator

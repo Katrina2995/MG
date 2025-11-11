@@ -1,0 +1,56 @@
+[
+  {
+    "url": "/",
+    "title": "Home",
+    "description": "Home page with company overview, licensing (CA, UT, MT), client types, and core practice areas.",
+    "inNav": true
+  },
+  {
+    "url": "/services.html",
+    "title": "Services",
+    "description": "Services overview listing practice areas: Litigation Intel, TSCM, Safety & Privacy, Security Consulting, Due Diligence, Reality TV, Surveillance, and Process Service.",
+    "inNav": true
+  },
+  {
+    "url": "/profiles.html",
+    "title": "About",
+    "description": "Profiles landing page linking to team bios.",
+    "inNav": true
+  },
+  {
+    "url": "/resources.html",
+    "title": "Resources",
+    "description": "Resources page linking to external associations and agencies (no internal child pages).",
+    "inNav": true
+  },
+  {
+    "url": "/contact.html",
+    "title": "Contact",
+    "description": "Contact details including Park City address, phone number, and team emails; license numbers listed.",
+    "inNav": true
+  },
+  {
+    "url": "/security-consulting.html",
+    "title": "Security Consulting",
+    "description": "Service detail page outlining offerings like executive protection, counter-surveillance, physical security assessments, information security assessments, law enforcement liaison, and TSCM.",
+    "inNav": false
+  },
+  {
+    "url": "/bruce-thomas.html",
+    "title": "Bruce Thomas",
+    "description": "Bio for Bruce Thomas, manager of security services; 27-year LASD veteran; crime prevention expertise and major event security background.",
+    "inNav": false
+  },
+  {
+    "url": "/scott-devereaux.html",
+    "title": "Scott Devereaux",
+    "description": "Bio for Scott Devereaux, background investigations lead; extensive due diligence and surveillance experience, including protective details.",
+    "inNav": false
+  },
+  {
+    "url": "/michael-miller.html",
+    "title": "Michael Miller",
+    "description": "Bio for founder and principal; prior work with Gavin de Becker & Associates; law enforcement and investigative background.",
+    "inNav": false
+  }
+]

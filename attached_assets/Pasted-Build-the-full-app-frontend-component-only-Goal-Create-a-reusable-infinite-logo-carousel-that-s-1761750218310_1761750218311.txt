@@ -1,0 +1,41 @@
+Build the full app (frontend component only). Goal: Create a reusable, infinite logo carousel that scrolls right-to-left using all images in the /client_logos directory.
+
+Requirements:
+- Data source: Load every image file in /client_logos (png|jpg|jpeg|svg|webp). No hardcoded list. Handle an empty folder gracefully (render nothing with an aria-live note).
+- Behavior: Continuous, seamless marquee-style scroll from right to left; loop infinitely; no jitter at stitch point. Pause on hover and when the component is offscreen (IntersectionObserver). Respect prefers-reduced-motion: if true, render a static, keyboard-scrollable strip.
+- Interaction: On hover/focus of a logo, slightly scale up and show a subtle focus ring; do not change brand colors of the logos themselves. Provide optional link metadata if a mapping file exists (e.g., /client_logos/links.json).
+- Styling: Inherit the host page’s color system. Use current computed styles or CSS variables on the page for backgrounds, borders, and text. Do NOT apply Summit Technology brand colors or any fixed palette; adapt to whatever page this component is placed on. Avoid global CSS collisions (scope styles). 
+- Accessibility: 
+  - Role="list" with role="listitem" for logos. 
+  - Each image needs alt text. If filenames are used, convert “acme_corp.svg” to “Acme Corp.” 
+  - Keyboard support: Tab through items; Space/Enter toggles pause/resume. 
+  - Provide aria-controls/aria-pressed state for a Play/Pause control.
+- Performance: Lazy-load non-visible images; precompute total track width; use GPU-friendly transforms. Provide a fallback for SSR without layout shifting. Target Lighthouse performance ≥ 95 for a test page.
+- API/Props (component): 
+  - speed (px/sec, default 60)
+  - gap (rem, default 2)
+  - duplicateTrack (boolean, default true for seamless loop)
+  - pauseOnHover (boolean, default true)
+  - reduceMotionFallback ('static'|'paged', default 'static')
+- File structure: 
+  - src/components/LogoCarousel.{tsx,css}
+  - src/utils/getClientLogos.ts to read directory and metadata
+  - Optional: src/data/client_logo_links.json for URL mapping
+  - Demo page at /demo/logos to showcase responsiveness and theming
+- Constraints:
+  - TypeScript + React (or framework-native component if Next.js).
+  - No heavy animation libs; implement with CSS keyframes or requestAnimationFrame.
+  - No global resets; component CSS must be namespaced.
+  - Do not add Summit Technology theme tokens or colors.
+
+Testing & safety:
+- Enable App Testing for the /demo/logos page. Create tests for: infinite loop (no visible gap), hover pause, reduced-motion behavior, keyboard operation, and offscreen pause.
+- Add checkpoints after: (1) basic render, (2) infinite scroll working, (3) accessibility complete, (4) performance tuning done. If tests fail, roll back to the prior checkpoint and fix.
+- Document how the component derives colors from the host page (read CSS variables and computed styles) and which variables it expects, but ensure sane fallbacks.
+
+Deliverables:
+- Component code, demo page, brief README with usage instructions, prop table, and notes on integrating with arbitrary pages.
+- A small utility to auto-generate alt text from filenames and allow overrides via a JSON map.
+
+Do not modify sitewide theme files. Match the page you’re inserted into. If the page has no CSS variables, use computed style inheritance and neutral fallbacks (currentColor, transparent backgrounds).
+ 

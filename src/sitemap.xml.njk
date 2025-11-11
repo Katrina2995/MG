@@ -1,0 +1,19 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {%- for route in routes %}
+  <url>
+    <loc>{{ site.baseUrl }}{{ route.url }}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>{% if route.url == "/" %}1.0{% else %}0.8{% endif %}</priority>
+  </url>
+  {%- endfor %}
+  <url>
+    <loc>{{ site.baseUrl }}/home.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

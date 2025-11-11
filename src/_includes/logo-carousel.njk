@@ -1,0 +1,145 @@
+<section class="section-white logo-carousel-section">
+  <div class="container">
+    <div class="content-container">
+      <div class="section-header">
+        <h3>Trusted by Globally Recognized Organizations</h3>
+        <div class="section-divider"></div>
+      </div>
+      
+      <div class="logo-carousel-wrapper">
+        <div class="logo-carousel-viewport" id="carouselViewport">
+          <div class="logo-carousel-track" id="carouselTrack">
+            {% for logo in clientLogos %}
+            <div class="logo-carousel-item">
+              <img src="{{ logo.src }}" alt="{{ logo.alt }}" loading="lazy">
+            </div>
+            {% endfor %}
+            <!-- Duplicate for seamless loop -->
+            {% for logo in clientLogos %}
+            <div class="logo-carousel-item">
+              <img src="{{ logo.src }}" alt="" aria-hidden="true" loading="lazy">
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.logo-carousel-section {
+  padding: 3rem 0;
+}
+
+.logo-carousel-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.logo-carousel-viewport {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  padding: 2rem 0;
+}
+
+.logo-carousel-track {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  flex-shrink: 0;
+  will-change: transform;
+  animation: scroll-logos 30s linear infinite;
+}
+
+@keyframes scroll-logos {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.logo-carousel-track.paused {
+  animation-play-state: paused;
+}
+
+.logo-carousel-viewport:hover .logo-carousel-track {
+  animation-play-state: paused;
+}
+
+.logo-carousel-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  min-width: 6rem;
+  max-width: 12rem;
+}
+
+.logo-carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.logo-carousel-item img:hover {
+  transform: scale(1.1);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .logo-carousel-track {
+    animation: none;
+  }
+  
+  .logo-carousel-viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .logo-carousel-item {
+    scroll-snap-align: center;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo-carousel-item {
+    height: 3rem;
+    min-width: 4rem;
+    max-width: 8rem;
+  }
+}
+</style>
+
+<script>
+(function() {
+  const track = document.getElementById('carouselTrack');
+  const viewport = document.getElementById('carouselViewport');
+
+  // Pause when carousel is not visible to save resources (IntersectionObserver)
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) {
+          track.classList.add('paused');
+        } else {
+          track.classList.remove('paused');
+        }
+      });
+    }, { threshold: 0 });
+    
+    observer.observe(viewport);
+  }
+})();
+</script>

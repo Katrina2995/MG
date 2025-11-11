@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} | {{ site.name }}</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="canonical" href="{{ site.baseUrl }}{{ page.url }}">
+  
+  {# Open Graph tags #}
+  <meta property="og:title" content="{{ title }} | {{ site.name }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site.baseUrl }}{{ page.url }}">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  <a href="#content" class="skip-link" data-testid="link-skip-to-content">Skip to main content</a>
+  
+  {% include "components/header.njk" %}
+  
+  <main id="content" role="main">
+    {{ content | safe }}
+  </main>
+  
+  {% include "components/footer.njk" %}
+  
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

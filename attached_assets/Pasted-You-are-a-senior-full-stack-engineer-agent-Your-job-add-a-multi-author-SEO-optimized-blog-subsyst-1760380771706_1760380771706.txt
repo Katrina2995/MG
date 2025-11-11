@@ -1,0 +1,121 @@
+You are a senior full-stack engineer agent. Your job: add a multi-author, SEO-optimized blog subsystem to the existing website and deliver working code, DB migrations, tests, and Replit run/migrate instructions. Work using best practices: secure auth, server-side rendering for public posts, sanitized markdown → HTML, and automated tests. Provide a short plan before coding and create a Replit checkpoint before any DB migration or destructive change.
+
+High-level requirements
+
+New blog root: /blog. Public list, tag pages, search, and per-post pages (SSR).
+
+Multi-author accounts with roles: author, editor, admin. Enforce permissions server & client side.
+
+Editorial workflow: draft → review → publish. Authors create drafts; editors publish.
+
+Markdown WYSIWYG (stores markdown), server-side rendered HTML for SEO, sanitized output to prevent XSS.
+
+SEO: meta title/description, canonical URL, og: & Twitter tags, JSON-LD Article schema, sitemap.xml and rss.xml.
+
+Slugs/permalinks & 301 redirect support when slug changes.
+
+Images: upload + optimized serving (Next/Image or CDN); alt text required.
+
+Search: Postgres full-text search (tsvector + GIN index) or equivalent.
+
+Admin UI: /admin/blog to manage posts, tags, and users (role assignment).
+
+Tests: unit tests (slug, permissions, SEO generation) and at least one integration test covering create→publish→public page.
+
+Security: password hashing (bcrypt), CSRF protection, rate limiting for auth endpoints, secrets in Replit Secrets.
+
+Deliverables: code, migrations, tests, README with Replit run/migrate/test steps.
+
+Preferred tech stack (agent choice)
+
+Primary (preferred): Next.js (SSR), Prisma + PostgreSQL, Tailwind CSS, React Markdown, DOMPurify (or sanitize-html).
+
+Alternative: Remix/Express backend with SSR; still use Prisma and Postgres.
+
+Use sessions or NextAuth with credentials + email verification; store DATABASE_URL, JWT_SECRET / NEXTAUTH_SECRET, and SMTP_* in Replit Secrets.
+
+Data model (concise)
+
+User { id, username, email, passwordHash, role, bio, avatarUrl, createdAt }
+
+Post { id, title, slug, summary, markdown, html, status, metaTitle, metaDescription, canonicalUrl, featuredImage, authorId, tags[], createdAt, updatedAt, publishedAt }
+
+Tag { id, name, slug }
+
+Add Postgres tsvector index on title+markdown for search.
+
+Minimal API endpoints / pages
+
+Public: GET /blog (paginated), GET /blog/[...slug] (SSR), GET /blog/tag/[tag], GET /blog/rss.xml, GET /blog/sitemap.xml, GET /blog/search?q=.
+
+Auth: POST /api/auth/register, POST /api/auth/login, POST /api/auth/logout, POST /api/auth/forgot, POST /api/auth/reset.
+
+Posts: POST /api/posts (create draft), PUT /api/posts/:id, POST /api/posts/:id/submit, POST /api/posts/:id/publish, GET /api/tags. Protect with role checks.
+
+SEO checklist (agent must implement)
+
+SSR post pages include <title>, <meta name="description">, canonical link, og: tags, Twitter card, and JSON-LD Article.
+
+sitemap.xml and rss.xml auto-update on publish.
+
+Truncate meta descriptions server-side to ~155 chars.
+
+robots.txt excluding admin routes.
+
+Provide rel=canonical and 301 redirect on slug changes.
+
+Security & quality
+
+Sanitize rendered HTML server-side before sending to the client.
+
+Hash passwords with bcrypt (cost >= 12 recommended).
+
+Validate & rate-limit registration/publish endpoints.
+
+Add basic accessibility semantics for public pages.
+
+Lint & format (ESLint + Prettier). Tests must run with npm test.
+
+Replit / deployment specifics
+
+Add package.json scripts: dev, build, start, migrate, seed, test.
+
+Add replit.nix / .replit entries so the app runs in Replit. Document which Replit Secrets to set.
+
+Use Replit checkpoint (or Git branch) before running any DB migration or destructive script.
+
+Tests & seed data
+
+Seed: 2 users (author + editor), 5 posts (mix draft/published), 6 tags.
+
+Tests: auth flow, permission checks (author cannot publish), publish workflow updates publishedAt and sitemap.
+
+Deliverables (what to commit)
+
+Code changes (pages, API routes, components).
+
+prisma/schema.prisma and migrations.
+
+Unit + integration tests.
+
+README: setup, Replit Secrets list, migrate & seed instructions, how to run tests.
+
+Short QA checklist and rollback instructions for DB migration.
+
+Step plan — show this to me before coding (agent must present)
+
+Show 5–8 step plan (branch, migrate, auth, editor UI, publish workflow, SEO, tests).
+
+On approval: create branch feature/blog and checkpoint.
+
+Scaffold Prisma models + migration (checkpoint before running).
+
+Implement auth + user roles.
+
+Implement post CRUD, editor with markdown preview.
+
+Implement publish workflow, sitemap/rss generation, SEO meta + JSON-LD.
+
+Implement admin UI & search.
+
+Add tests, seed data, final QA, and README.

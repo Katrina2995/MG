@@ -1,0 +1,29 @@
+<header class="site-header" role="banner">
+  <div class="container">
+    <div class="header-content">
+      <a href="/" class="logo" aria-label="{{ site.name }} Home">
+        <img src="/assets/Miller_Group_logo_black.svg" alt="MILLERGROUP Intelligence" class="logo-image">
+        <span class="logo-text company-name"><strong>MILLER</strong>GROUP Intelligence, Inc.</span>
+      </a>
+      <button class="mobile-menu-toggle" aria-label="Toggle navigation" aria-expanded="false" data-testid="button-mobile-menu">
+        <span class="menu-icon"></span>
+      </button>
+      <nav class="main-nav" role="navigation" aria-label="Main navigation">
+        <ul>
+          {% for route in routes %}
+            {% if route.inNav %}
+            <li>
+              <a href="{{ route.url }}" 
+                 class="{% if route.url | isActive(page.url) %}active{% endif %}"
+                 {% if route.url | isActive(page.url) %}aria-current="page"{% endif %}
+                 data-testid="link-nav-{{ route.title | lower | replace(' ', '-') }}">
+                {{ route.title }}
+              </a>
+            </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
